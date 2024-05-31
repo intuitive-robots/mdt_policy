@@ -135,52 +135,52 @@ on large-scale datasets.
 <div class="columns is-mobile is-multiline is-centered">
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p0_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_0_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p1_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_1_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p2_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_2_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p3_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_3_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p4_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_4_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p5_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_5_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p6_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_6_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p7_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_7_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p8_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_8_30000.mp4" type="video/mp4">
         </video>
     </div>
     <div class="column is-one-third-mobile is-one-fifth-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
-            <source src="./static/videos/libero_10_22_onk9_p9_videos/video.mp4" type="video/mp4">
+            <source src="./static/videos/long_horizon_sequence_9_30000.mp4" type="video/mp4">
         </video>
     </div>
 </div>

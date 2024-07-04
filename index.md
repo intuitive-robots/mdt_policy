@@ -65,56 +65,68 @@ environments.
 **Left**: Overview of the proposed multimodal Transformer-Encoder-Decoder Diffusion Policy used in MDT.
 **Right**: Specialized Diffusion Transformer Block for the Denoising of the Action Sequence.
 
-MDT learns a goal-conditioned latent
-state representation from multiple image observations and multimodal goals. The camera images are either processed with
-frozen Voltron Encoders and a Perceiver or using ResNets. The separate GPT denoising module iteratively denoises an action
-sequence of 10 steps with a Transformer Decoder with causal Attention. It consists of several Denoising Blocks, as visualized
-on the right side. These blocks process noisy action tokens with self-attention and fuse the conditioning information from the
-latent state representation via cross-attention. MDT applies adaLN conditioning to condition the blocks on the current
-noise level. In addition, it aligns the latent representation tokens of the same state with different goal specifications using
-self-supervised contrastive learning. The latent representation tokens are also used as a context input for the masked Image
-Decoder module to reconstruct masked-out patches from future images.
+MDT learns a goal-conditioned latent state representation from multiple image observations
+and multimodal goals. The camera images are either processed with frozen Voltron Encoders
+and a Perceiver or using ResNets. The separate GPT denoising module iteratively denoises an
+action sequence of 10 steps with a Transformer Decoder with causal Attention. It consists of
+several Denoising Blocks, as visualized on the right side. These blocks process noisy action
+tokens with self-attention and fuse the conditioning information from the latent state
+representation via cross-attention. MDT applies adaLN conditioning to condition the blocks
+on the current noise level. In addition, it aligns the latent representation tokens of the same
+state with different goal specifications using self-supervised contrastive learning.
+To enhance the multimodal goal understanding, MDT uses two novel self-supervised losses:
 
 ### Masked Generative Foresight
-<div class="column is-half is-pulled-right p-0">
+<div class="column is-two-thirds is-pulled-right p-0">
     <img src="./static/image/mgf.png" alt="Masked Generative Foresight"/>
 </div>
-The Masked Generative Foresight Auxiliary Task
-enhances the MDT model. It starts by encoding the current
-observation and goal using the MDT Encoder. The resulting
-latent state representations then serve as conditional inputs
-for the Future Image-Decoder. This decoder receives encoded
-patches of future camera images along with mask tokens. Its
-task is to reconstruct the occluded patches in future frames.
+A fundamental insight of this work is the importance of an informative latent space for
+understanding how desired goals affect robot behavior. Policies capable of following
+multimodal goals must map different goal modalities to the same desired behaviors. Whether
+a goal is defined through language or represented as an image, the intermediate changes in
+the environment are identical across these goal modalities. The proposed MGF, an additional
+self-supervised auxiliary objective, builds upon this insight. The resulting latent state
+representations then serve as conditional inputs for the Future Image-Decoder. This small
+transformer decoder receives encoded patches of future camera images along with mask
+tokens. Its task is to reconstruct the occluded patches in future frames conditioned on the
+latent tokens of our policy. During inference, this step can be omitted.
 
 
 ### Contrastive Latent Alignment
+<div class="column is-two-thirds is-pulled-left p-0 pr-3">
+    <img src="./static/image/cla.png" alt="Contrastive Latent Alignment"/>
+</div>
+Contrastive Latent Alignment auxiliary objective aligns the MDT(-V) embeddings across
+different goal modalities for the same state. The objective focuses on the latent embeddings
+of our diffusion policy that include the goal as well as the current state information. This
+allowing the CLA objective to consider the task dynamics. Every training sample that is paired
+with a multimodal goal specification is projected to latent vectors for images and language
+goals, respectively. Contrastive Latent Alignment is achieved by using the InfoNCE loss with
+cosine similarity between the image and language projection. Instead of aligning the goal
+space, CLA aligns the latent space of the goal-conditioned policy end-to-end during training.
 
-Contrastive Latent Alignment auxiliary objective aligns
-the MDT(-V) embeddings across
-different goal modalities. These embeddings include the goal
-as well as the current state information, allowing the CLA
-objective to consider the task dynamics. 
-Every training sample that is paired with a multimodal
-goals specification is projected to latent vectors
-for images and language goals respectively.
-Contrastive Latent Alignment is achieved by using the InfoNCE loss with cosine similarity between the image and language projection.
 
+## State-of-the-art on CALVIN
 
-## State-of-the-art on CALVIN ABCD→D
-MDT-V sets a
-new record in the CALVIN challenge, extending the average
-rollout length to **4.51** which is a **10% absolute improvement**
-over RoboFlamingo. MDT also surpasses all other tested
-methods. Notably, MDT achieves this while having less than
-10% of trainable parameters and not requiring pretraining
-on large-scale datasets.
+### CALVIN ABCD→D
+MDT-V sets a new record in the CALVIN challenge, extending the average rollout length to
+**4.66***, which is a **12% absolute improvement** over RoboFlamingo. MDT also surpasses all
+other tested methods. Notably, MDT achieves this while having less than 10% of trainable
+parameters and not requiring pretraining on large-scale datasets. We train and evaluate MDT
+in just 14 hours by running it on 4 NVIDIA A6000 GPUs.
 
 <div class="columns is-centered">
     <div class="column is-two-thirds">
         <img src="./static/image/calvin-abcd.png" alt="CALVIN ABCD->D"/>
     </div>
 </div>
+
+<small>*: 4.52 in the paper. Given per</small>
+
+### CALVIN D→D
+MDT also achieves a new SOTA performance on the CALVIN D Benchmark in just 8 hours of
+training and testing on 4 GPUs
+
 <div class="columns is-mobile is-multiline is-centered">
     <div class="column is-half-mobile is-one-third-tablet">
         <video width="100%" autoplay controls muted loop playsinline>
@@ -278,7 +290,7 @@ or approximately 20% of the dataset.
         <video width="100%" autoplay controls muted loop playsinline>
             <source src="./static/videos/m2.mp4" type="video/mp4">
         </video>
-    </div>    
+    </div>
 </div>
 #### Single-task
 <div class="columns is-centered is-multiline is-mobile">

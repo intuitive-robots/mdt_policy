@@ -110,7 +110,7 @@ space, CLA aligns the latent space of the goal-conditioned policy end-to-end dur
 
 ### CALVIN ABCD→D
 MDT-V sets a new record in the CALVIN challenge, extending the average rollout length to
-**4.66***, which is a **12% absolute improvement** over RoboFlamingo. MDT also surpasses all
+**4.60***, which is a **12% absolute improvement** over RoboFlamingo. MDT also surpasses all
 other tested methods. Notably, MDT achieves this while having less than 10% of trainable
 parameters and not requiring pretraining on large-scale datasets. We train and evaluate MDT
 in just 14 hours by running it on 4 NVIDIA A6000 GPUs.

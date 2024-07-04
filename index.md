@@ -121,7 +121,7 @@ in just 14 hours by running it on 4 NVIDIA A6000 GPUs.
     </div>
 </div>
 
-<small>*: 4.52 in the paper. Given per</small>
+<small>*: 4.52 in the paper. Performance is higher than reported given some fixes in the camera-ready code version.</small>
 
 ### CALVIN D→D
 MDT also achieves a new SOTA performance on the CALVIN D Benchmark in just 8 hours of

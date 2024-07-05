@@ -12,9 +12,6 @@ Fabian Wenzel,
 
 ![MDT Architecture](https://intuitive-robots.github.io/mdt_policy/static/image/mdt-v-figure.png)
 
-This work introduces the Multimodal Diffusion Transformer (MDT), a novel diffusion policy framework, that excels at learning versatile behavior from multimodal goal specifi- cations with few language annotations. MDT leverages a diffusion based multimodal transformer backbone and two self-supervised auxiliary objectives to master long-horizon manipulation tasks based on multimodal goals. The vast majority of imitation learning methods only learn from individual goal modalities, e.g. either language or goal images. However, existing large- scale imitation learning datasets are only partially labeled with language annotations, which prohibits current methods from learning language conditioned behavior from these datasets. MDT addresses this challenge by introducing a latent goal- conditioned state representation, that is simultaneously trained on multimodal goal instructions. This state representation aligns image and language based goal embeddings and encodes suffi- cient information to predict future states. The representation is trained via two self-supervised auxiliary objectives that enhance the performance of the presented transformer backbone. MDT shows exceptional performance on 164 tasks provided by the chal- lenging CALVIN and LIBERO benchmarks, including a LIBERO version that contains less than 2% language annotations. Further, MDT establishes a new record on the CALVIN manipulation challenge, demonstrating an absolute performance improvement of 15% over prior state-of-the-art methods, that require large- scale pretraining and contain 10× more learnable parameters. MDT demonstrated its ability to solve long-horizon manipulation from sparsely annotated data in both simulated and real-world environments.
-
----
 
 This is the official code repository for the paper [Multimodal Diffusion Transformer: Learning Versatile Behavior from
 Multimodal Goals](https://openreview.net/pdf?id=Pt6fLfXMRW).
@@ -117,7 +114,7 @@ For replication of the originial training results I recommend to use 4 GPUs with
 
 ## Acknowledgements
 
-This work is only possible becauase of the code from the following open-source projects and datasets:
+This work is only possible because of the code from the following open-source projects and datasets:
 
 #### CALVIN
 Original:  [https://github.com/mees/calvin](https://github.com/mees/calvin)

@@ -6,17 +6,15 @@ title: "Multimodal Diffusion Transformer: Learning Versatile Behavior from Multi
 authors: <a href="https://mbreuss.github.io/">Moritz Reuss</a>, Ömer Erdinç Yağmurlu, Fabian Wenzel, <a href="https://rudolf.intuitive-robots.net/">Rudolf Lioutikov</a>
 affiliations: <a href="https://www.irl.iar.kit.edu/">Intuitive Robots Lab (IRL)</a></br>Karlsruhe Institute of Technology
 paper: https://openreview.net/pdf?id=Pt6fLfXMRW
-video: ./static/videos/mdt-v5-encoded.mp4
+# video: ./static/videos/mdt-v5-encoded.mp4
 code: https://github.com/intuitive-robots/mdt_policy
 # data: https://huggingface.co/docs/datasets
 ---
 
-<!-- Using HTML to center the abstract -->
+<!-- Using HTML to center the abstract
 <video width="100%" autoplay controls muted loop playsinline>
     <source src="./static/videos/mdt-v5-encoded.mp4" type="video/mp4">
-</video>
-
----
+</video> -->
 
 <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
@@ -108,24 +106,31 @@ space, CLA aligns the latent space of the goal-conditioned policy end-to-end dur
 
 ## State-of-the-art on CALVIN
 
-### CALVIN ABCD→D
 MDT-V sets a new record in the CALVIN challenge, extending the average rollout length to
 **4.60***, which is a **12% absolute improvement** over RoboFlamingo. MDT also surpasses all
 other tested methods. Notably, MDT achieves this while having less than 10% of trainable
 parameters and not requiring pretraining on large-scale datasets. We train and evaluate MDT
 in just 14 hours by running it on 4 NVIDIA A6000 GPUs.
 
-<div class="columns is-centered">
-    <div class="column is-two-thirds">
-        <img src="./static/image/calvin-abcd.png" alt="CALVIN ABCD->D"/>
-    </div>
-</div>
-
-<small>*: 4.52 in the paper. Performance is higher than reported given some fixes in the camera-ready code version.</small>
-
-### CALVIN D→D
 MDT also achieves a new SOTA performance on the CALVIN D Benchmark in just 8 hours of
-training and testing on 4 GPUs
+training and testing on 4 GPUs.
+
+| Train | Method | 1 | 2 | 3 | 4 | 5 | **Avg. Len.** |
+|-------|--------|---|---|---|---|---|---------------|
+| **D** | HULC | 82.5% | 66.8% | 52.0% | 39.3% | 27.5% | 2.68±(0.11) |
+| | LAD | 88.7% | 69.9% | 54.5% | 42.7% | 32.2% | 2.88±(0.19) |
+| | Distill-D | 86.7% | 71.5% | 57.0% | 45.9% | 35.6% | 2.97±(0.04) |
+| | MT-ACT | 88.4% | 72.2% | 57.2% | 44.9% | 35.3% | 2.98±(0.05) |
+| | **MDT (ours)** | **93.3%** | **82.4%** | **71.5%** | **60.9%** | **51.1%** | **3.59±(0.07)** |
+| | **MDT-V (ours)** | **93.9%** | **83.8%** | **73.5%** | **63.9%** | **54.9%** | **3.70±(0.03)*** |
+| **ABCD** | HULC | 88.9% | 73.3% | 58.7% | 47.5% | 38.3% | 3.06±(0.07) |
+| | Distill-D | 86.3% | 72.7% | 60.1% | 51.2% | 41.7% | 3.16±(0.06) |
+| | MT-ACT | 87.1% | 69.8% | 53.4% | 40.0% | 29.3% | 2.80±(0.03) |
+| | RoboFlamingo | 96.4% | 89.6% | 82.4% | 74.0% | 66.0% | 4.09±(0.00) |
+| | **MDT (ours)** | **97.8%** | **93.8%** | **88.8%** | **83.1%** | **77.0%** | **4.41±(0.03)** |
+| | **MDT-V (ours)** | **99.1%** | **96.8%** | **92.8%** | **88.5%** | **83.1%** | **4.60±(0.05)*** |
+
+<small>*: 3.72±(0.05) (D) and 4.52±(0.02) (ABCD) in the paper. Performance is higher than reported given some fixes in the camera-ready code version.</small>
 
 <div class="columns is-mobile is-multiline is-centered">
     <div class="column is-half-mobile is-one-third-tablet">

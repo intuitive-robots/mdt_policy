@@ -1,0 +1,16 @@
+_target_: mdt.models.img_generation.masked_transformer_decoder.MaskedTransformerImgDecoder
+_recursive_: false
+
+resolution: ${gen_img_res}
+patch_size: 16
+decoder_depth: 6
+decoder_embed_dim: 192
+context_dim: ${model.latent_dim}
+decoder_n_heads: 8
+mlp_ratio: 4
+in_channels: 3
+norm_pixel_loss: True
+num_images: 2
+mask_ratio: 0.75
+symmetric_mask: True
+img_gen_frame_diff: ${img_gen_frame_diff}

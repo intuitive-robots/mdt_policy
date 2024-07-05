@@ -1,0 +1,4 @@
+_target_: mdt.models.perceptual_encoders.vision_clip.DefaultVisionClip
+freeze_backbone: true
+model_name: ${vis_clip_model_name} # 16 or 32 "RN101", "RN50x4", "RN50x16", "ViT-B/32", "ViT-B/16"
+device: ${device}

@@ -1,0 +1,41 @@
+lang_dataset: 
+  _target_: mdt.datasets.disk_dataset.ExtendedDiskDataset
+  key: "lang"
+  save_format: "npz"
+  batch_size: ${batch_size}
+  min_window_size: ${min_window_size}
+  max_window_size: ${max_window_size}
+  proprio_state: ${datamodule.proprioception_dims}
+  obs_space: ${datamodule.observation_space}
+  skip_frames: 1
+  pad: false
+  lang_folder: ${lang_folder}
+  aux_lang_loss_window: 8
+  num_workers: ${num_workers}
+  geometric_p_value: 0.1
+  window_sampling_strategy: ${window_sampling_strategy}
+  action_seq_len: ${act_seq_len}
+  obs_seq_len: ${obs_seq_len}
+  future_range: ${future_range}
+
+  img_gen_frame_diff: ${img_gen_frame_diff}
+
+vision_dataset:
+  _target_: mdt.datasets.disk_dataset.ExtendedDiskDataset
+  key: "vis"
+  save_format: "npz"
+  batch_size: ${batch_size}
+  min_window_size: ${min_window_size}
+  max_window_size: ${max_window_size}
+  proprio_state: ${datamodule.proprioception_dims}
+  obs_space: ${datamodule.observation_space}
+  pad: false
+  lang_folder: ${lang_folder} # "lang_paraphrase-MiniLM-L3-v2"
+  num_workers: ${num_workers}
+  window_sampling_strategy: ${window_sampling_strategy}
+  geometric_p_value: 0.1
+  action_seq_len: ${act_seq_len}
+  obs_seq_len: ${obs_seq_len}
+  future_range: ${future_range}
+
+  img_gen_frame_diff: ${img_gen_frame_diff}

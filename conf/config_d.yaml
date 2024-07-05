@@ -1,0 +1,75 @@
+defaults:
+  - callbacks: calvin
+  - datamodule: calvin
+  - model: mdtv_agent # or use mdt_agent
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
+
+root_data_dir: /home/hk-project-robolear/ft4740/code/calvin_d_old/dataset/task_D_D
+lang_folder: lang_clip_resnet50 
+vis_clip_model_name: ViT-B/16 
+clip_lang_model_name: ViT-B/32
+
+log_dir: /home/hk-project-sustainebot/ft4740/code/mdt_policy/logs
+slurm: false
+min_window_size: 21 
+max_window_size: 50
+future_range: 29
+seed: 242
+device: 'cuda'
+batch_size: 128 
+devices: 4
+goal_window_size: 1
+act_dim: 7
+obs_dim: 384
+goal_dim: 512
+obs_seq_len: 1
+act_seq_len: 10
+multistep: 10 
+p_last_state: 0
+gen_img_res: 112
+max_epochs: 20
+rollout_lh_skip_epochs: 19
+window_sampling_strategy: 'geometric' 
+num_tokens_voltron: 3
+num_workers: 12
+img_gen_frame_diff: 3 
+benchmark_name: calvin_d
+
+
+trainer:
+  gpus: ${devices}
+  precision: 16
+  max_epochs: ${max_epochs}
+  sync_batchnorm: false
+  accelerator: auto
+  limit_train_batches: 1000  
+  limit_val_batches: 4
+
+logger:
+  _target_: pytorch_lightning.loggers.WandbLogger
+  save_dir: .
+  name: logger
+  group: mdt
+  log_model: false
+  project: ${benchmark_name} # calvin_vision
+  entity: bennoq
+  id: ???
+
+
+hydra:
+  run:
+    dir: ${log_dir}/runs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${log_dir}/runs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.override_dirname}
+  job:
+    config:
+      override_dirname:
+        exclude_keys:
+          - log_dir
+          - datamodule.root_data_dir
+          - trainer.gpus
+          - datamodule.num_workers
+          - trainer.limit_train_batches
+          - trainer.limit_val_batches

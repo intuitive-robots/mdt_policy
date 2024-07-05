@@ -1,0 +1,8 @@
+_target_:  mdt.models.networks.clip_lang_encoder.LangClip
+# mdt.models.encoders.clip_tokens.LangClip
+_recursive_: false
+
+# device: ${device}
+# pretrained_model: ${clip_lang_model_name} 
+model_name: ${clip_lang_model_name}
+# 16 or 32 "RN101", "RN50x4", "RN50x16", "ViT-B/32", "ViT-B/16"

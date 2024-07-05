@@ -1,0 +1,32 @@
+--find-links https://download.pytorch.org/whl/cu116/torch_stable
+# cmake
+ #wheel
+# setuptools==57.5.0
+# pyhash==0.9.3
+numpy>1.2
+hydra-core==1.1.1
+hydra-colorlog
+matplotlib
+opencv-python
+omegaconf
+plotly
+ftfy
+torch==2.0.1
+torchsde
+torchdiffeq
+transformers==4.25.1
+vit-pytorch==1.4.4
+pytorch-lightning==1.9.5
+voltron-robotics
+gitpython
+scipy
+sentence-transformers
+torchsde
+einops
+torchdiffeq
+gym
+moviepy
+tqdm
+termcolor
+wandb
+einops_exts

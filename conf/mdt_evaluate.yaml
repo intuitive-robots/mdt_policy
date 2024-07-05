@@ -1,0 +1,36 @@
+defaults:
+  - /callbacks/rollout/tasks@tasks: new_playtable_tasks
+  - annotations: new_playtable_validation
+
+eval_cfg_overwrite:
+  datamodule:
+    datasets:
+      lang_dataset:
+        lang_folder: lang_annotations
+  overwrite_module_cfg:
+    voltron_cache: /home/i53/student/yagmurlu/code/mdt_policy/vcache
+
+ep_len: 360
+num_sequences: 1000
+num_videos: 10
+lang_embeddings: null
+render: False
+log_wandb: True
+wandb:
+  entity: omeryagmurlu
+debug: False
+dataset_path: /home/i53/student/yagmurlu/code/mdt_policy/dataset/task_D_D
+train_folder: /home/i53/student/yagmurlu/code/mdt_policy/pretrained_models/CALVIN ABCD/mdtv_1_abcd
+model_name: mdt_test
+device: 0
+sampler_type: ddim
+multistep: 10
+num_sampling_steps: 10
+cond_lambda: 1
+cfg_value: 1
+sigma_min: 1.0
+sigma_max: 80
+noise_scheduler: exponential
+# sigma_min: null
+# sigma_max: null
+# noise_scheduler: null

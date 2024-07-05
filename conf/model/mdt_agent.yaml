@@ -1,0 +1,42 @@
+_target_: mdt.models.mdt_agent.MDTAgent
+_recursive_: false
+
+defaults:
+  - language_goal: clip
+  - visual_goal: clip
+  - img_gen: masked_transformer
+  - model: mdt_transformer
+
+latent_dim: 512
+multistep: 10
+sampler_type: 'ddim'
+num_sampling_steps: 10
+sigma_data: 0.5
+sigma_min: 0.001
+sigma_max: 80
+noise_scheduler: 'exponential'
+sigma_sample_density_type: 'loglogistic'
+use_lr_scheduler: true
+act_window_size: 10
+cont_alpha: 1.0
+masked_beta: 1.0
+use_distributed_clip: True
+use_text_not_embedding: True
+ckpt_path: null
+seed: ${seed}
+
+optimizer:
+  _target_: torch.optim.AdamW
+  transformer_weight_decay: 0.05
+  obs_encoder_weight_decay: 0.05
+  learning_rate: 1e-4
+  betas: [0.9, 0.9]
+
+lr_scheduler:
+  lr_scheduler:
+    init_lr: 1e-4  # This is the peak or maximum learning rate
+    init_lr_scale: 0.1  # This is the ratio of initial learning rate to peak learning rate
+    final_lr_scale: 1e-6  # This is the ratio of final learning rate to peak learning rate
+    total_steps: 50000  # Example total steps, adjust as needed
+    phase_ratio: "(0.02, 0.08, 0.9)"
+    lr: 1e-4 

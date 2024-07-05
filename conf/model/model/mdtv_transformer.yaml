@@ -1,0 +1,36 @@
+_target_: mdt.models.edm_diffusion.score_wrappers.GCDenoiser
+_recursive_: false
+
+sigma_data: 0.5
+
+inner_model:
+  _target_: mdt.models.networks.mdtv_transformer.MDTVTransformer
+  action_dim: 7
+  obs_dim: 384
+  goal_dim: ${goal_dim}
+  proprio_dim: 8
+  goal_conditioned: True
+  embed_dim: 384
+  n_dec_layers: 4
+  n_enc_layers: 4
+  n_obs_token: ${num_tokens_voltron}
+  goal_seq_len: ${goal_window_size}
+  obs_seq_len: ${obs_seq_len}
+  action_seq_len: ${act_seq_len}
+  embed_pdrob: 0
+  goal_drop: 0
+  attn_pdrop: 0.3
+  resid_pdrop: 0.1
+  mlp_pdrop: 0.05
+  # Architecture details
+  n_heads: 8
+  device: ${device}
+  linear_output: True
+  use_rot_embed: False
+  use_abs_pos_emb: True
+  bias: false
+  use_ada_conditioning: True
+  use_noise_encoder: False # only relevant for ada_conditioning
+  use_modality_encoder: True
+  use_mlp_goal: True
+  

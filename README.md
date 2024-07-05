@@ -1,5 +1,4 @@
-# Multimodal Diffusion Transformer for Learning from Play
-Multimodal Diffusion Transformer for Learning from Play
+# Multimodal Diffusion Transformer: Learning Versatile Behavior from Multimodal Goals
 
 [Paper](https://openreview.net/pdf?id=Pt6fLfXMRW), [Project Page](), [RSS 2024](??)
 

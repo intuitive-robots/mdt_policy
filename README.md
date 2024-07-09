@@ -1,6 +1,6 @@
 # Multimodal Diffusion Transformer: Learning Versatile Behavior from Multimodal Goals
 
-[Paper](https://openreview.net/pdf?id=Pt6fLfXMRW), [Project Page](), [RSS 2024](??)
+[Paper](https://arxiv.org/pdf/2407.05996), [Project Page](), [RSS 2024](https://roboticsconference.org/program/papers/121/)
 
 [Moritz Reuss](https://mbreuss.github.io/moritzreuss/)<sup>1</sup>,
 [Ömer Erdinç Yağmurlu](https://scholar.google.com/citations?user=I_Mxp5cAAAAJ&hl=en),

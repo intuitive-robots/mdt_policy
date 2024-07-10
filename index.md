@@ -6,7 +6,7 @@ title: "Multimodal Diffusion Transformer: Learning Versatile Behavior from Multi
 authors: <a href="https://mbreuss.github.io/">Moritz Reuss</a>, Ömer Erdinç Yağmurlu, Fabian Wenzel, <a href="https://rudolf.intuitive-robots.net/">Rudolf Lioutikov</a>
 affiliations: <a href="https://www.irl.iar.kit.edu/">Intuitive Robots Lab (IRL)</a></br>Karlsruhe Institute of Technology
 venue: "Robotics: Science and Systems (RSS) 2024"
-paper: https://openreview.net/pdf?id=Pt6fLfXMRW
+paper: https://arxiv.org/pdf/2407.05996
 # video: ./static/videos/mdt-v5-encoded.mp4
 code: https://github.com/intuitive-robots/mdt_policy
 # data: https://huggingface.co/docs/datasets

@@ -32,7 +32,9 @@ perceiver_num_time_embeds: 1
 perceiver_dim: 384
 num_latents: 3
 
-voltron_cache: /home/hk-project-robolear/ft4740/code/calvin_d/pretrained_model_weights
+#voltron_cache: /home/hk-project-robolear/ft4740/code/calvin_d/pretrained_model_weights
+#voltron_cache: /home/geyuan/pretrained
+voltron_cache: /public/home/group_xudong/gavinyuan/pretrained
 
 optimizer:
   _target_: torch.optim.AdamW

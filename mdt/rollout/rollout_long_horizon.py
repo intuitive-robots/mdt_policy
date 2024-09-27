@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import os
 from typing import Any
+import time
 
 import hydra
 import numpy as np
@@ -117,6 +118,7 @@ class RolloutLongHorizon(Callback):
         val_annotations,
         debug,
     ):
+        print('[DEBUG] RolloutLongHorizon __init__ start')
         self.env = None  # type: Any
         self.env_cfg = env_cfg
         self.task_checker = hydra.utils.instantiate(tasks)
@@ -136,9 +138,11 @@ class RolloutLongHorizon(Callback):
         self.eval_sequences = None
         self.val_annotations = val_annotations
         self.debug = debug
+        print("[DEBUG] RolloutLongHorizon __init__ end")
 
     def on_validation_start(self, trainer: Trainer, pl_module: LightningModule,  dataloader_idx: int =0) -> None:
         """Called when the validation loop begins."""
+        print(f'[DEBUG] Rank={os.environ.get("LOCAL_RANK")}: on_validation_start')
         if self.env is None:
             self.device = pl_module.device
             dataset = trainer.val_dataloaders[0].dataset.datasets["lang"] if 'lang' in trainer.val_dataloaders[0].dataset.datasets else trainer.val_dataloaders[0].dataset.datasets['vis'] # type: ignore
@@ -150,6 +154,8 @@ class RolloutLongHorizon(Callback):
                     break
             else:
                 self.env = hydra.utils.instantiate(self.env_cfg, dataset, pl_module.device)
+                print(f'[DEBUG] Rank={os.environ.get("LOCAL_RANK")}: hydra.instantiate env')
+            print(f'[DEBUG] Rank={os.environ.get("LOCAL_RANK")}: pl_module.device={pl_module.device}')
             if self.num_videos > 0:
                 if dist.is_available() and dist.is_initialized():
                     self.num_videos = divide_across_ranks(self.num_videos, dist.get_world_size(), dist.get_rank())
@@ -168,17 +174,20 @@ class RolloutLongHorizon(Callback):
                 self.eval_sequences = get_sequences(self.num_sequences)
 
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule, dataloader_idx: int =0, *args) -> None:  # type: ignore
+        print("[DEBUG] on_validation_epoch_end")
         if pl_module.current_epoch == 0 and self.skip_epochs > 0:
             for i in range(1, 6):
                 pl_module.log(f"eval_lh/sr_chain_{i}", torch.tensor(0.0), on_step=False, sync_dist=True)
             pl_module.log("eval_lh/avg_seq_len", torch.tensor(0.0), on_step=False, sync_dist=True)
         elif pl_module.current_epoch == self.skip_epochs or ((pl_module.current_epoch - self.skip_epochs) >= 0 and (pl_module.current_epoch - self.skip_epochs) % self.rollout_freq == 0):
+            print(f'[DEBUG] Rank={os.environ.get("LOCAL_RANK")}: env.device={self.env.device}')
             results = self.evaluate_policy(pl_module)
 
             if self.num_videos > 0:
                 # log rollout videos
                 self.rollout_video.log(pl_module.global_step)
 
+            print(f'[DEBUG] Rank={os.environ.get("LOCAL_RANK")} rollout finished. waiting gathering...')
             results = gather_results(results)
             count = Counter(results)  # type: ignore
             print()
@@ -196,7 +205,7 @@ class RolloutLongHorizon(Callback):
         results = []
         total_evaluations = len(self.eval_sequences)
         
-        for i, (initial_state, eval_sequence) in enumerate(tqdm(self.eval_sequences, desc="Evaluating Policy", total=total_evaluations)):
+        for i, (initial_state, eval_sequence) in enumerate(tqdm(self.eval_sequences, desc=f"Evaluating Policy Rank={os.environ.get('LOCAL_RANK')}", total=total_evaluations)):
             record = i < self.num_videos
             result = self.evaluate_sequence(model, initial_state, eval_sequence, record, i)
             results.append(result)
@@ -216,19 +225,29 @@ class RolloutLongHorizon(Callback):
             print()
             print(f"Evaluating sequence: {' -> '.join(eval_sequence)}")
             print("Subtask: ", end="")
+        start_time = time.time()
         for subtask in eval_sequence:
             if record:
                 self.rollout_video.new_subtask()
+            roll_time = time.time()
             success = self.rollout(model, subtask, record)
+            # print("[DEBUG] rollout_time=", time.time() - roll_time)
             if record:
                 self.rollout_video.draw_outcome(success)
             if success:
                 success_counter += 1
             else:
+                print("[DEBUG] part2(failed) time=", time.time() - start_time,
+                      "len(seq)=", len(eval_sequence), "success=", success_counter,
+                      "avg_time=", (time.time() - start_time) / (1 + success_counter))
                 return success_counter
+        # print("[DEBUG] part2(success) time=", time.time() - start_time,
+        #       "len(seq)=", len(eval_sequence),
+        #       "avg_time=", (time.time() - start_time) / len(eval_sequence))
         return success_counter
 
     def rollout(self, model, subtask, record):
+        start_time = time.time()
         if self.debug:
             print(f"{subtask} ", end="")
         obs = self.env.get_obs()
@@ -241,9 +260,13 @@ class RolloutLongHorizon(Callback):
         start_info = self.env.get_info()
         success = False
         for step in range(self.ep_len):
+            start = time.time()
             action = model.step(obs, goal)
+            # print(f"[DEBUG] inner_roll.model@{step}:", time.time() - start)
+            start = time.time()
             # print(action.shape)
             obs, _, _, current_info = self.env.step(action)
+            # print(f"[DEBUG] inner_roll.step@{step}:", time.time() - start)
             if self.debug and os.environ.get("DISPLAY") is not None:
                 img = self.env.render(mode="rgb_array")
                 join_vis_lang(img, lang_annotation)
@@ -251,7 +274,9 @@ class RolloutLongHorizon(Callback):
                 # update video
                 self.rollout_video.update(obs["rgb_obs"]["rgb_static"])
             # check if current step solves a task
+            start = time.time()
             current_task_info = self.task_checker.get_task_info_for_set(start_info, current_info, {subtask})
+            # print(f"[DEBUG] inner_roll.task_check@{step}:", time.time() - start)
             if len(current_task_info) > 0:
                 success = True
                 break

@@ -65,27 +65,43 @@ def process_rgb(
     transforms: Dict,
     seq_idx: int = 0,
     window_size: int = 0,
+    on_gpu: bool = False,
 ) -> Dict[str, Dict[str, torch.Tensor]]:
     rgb_obs_keys = observation_space["rgb_obs"]
     seq_rgb_obs_dict = {}
+    idx = 0
+    import time
+    # print('rgb_obs_keys:', rgb_obs_keys)
     for _, rgb_obs_key in enumerate(rgb_obs_keys):
         if rgb_obs_key not in episode:
             # If the key is not found, skip to the next iteration
             continue
+        start = time.time()
         rgb_obs = episode[rgb_obs_key]
         # expand dims for single environment obs
         if len(rgb_obs.shape) != 4:
             rgb_obs = np.expand_dims(rgb_obs, axis=0)
         assert len(rgb_obs.shape) == 4
+        # print(f'[DEBUG] np.expand: {time.time() - start}')
+        start = time.time()
         if window_size == 0 and seq_idx == 0:  # single file loader
             # To Square image
             seq_rgb_obs_ = torch.from_numpy(rgb_obs).byte().permute(0, 3, 1, 2)
         else:  # episode loader
             seq_rgb_obs_ = torch.from_numpy(rgb_obs[seq_idx : seq_idx + window_size]).byte().permute(0, 3, 1, 2)
+        # print(f'[DEBUG] torch.from_numpy: {time.time() - start}')
+        start = time.time()
         # we might have different transformations for the different cameras
         if rgb_obs_key in transforms:
+            # print('[BEFORE]', seq_rgb_obs_.shape, seq_rgb_obs_.min(), seq_rgb_obs_.max())
+            if on_gpu:
+                seq_rgb_obs_ = seq_rgb_obs_.to(int(os.environ['LOCAL_RANK']))
             seq_rgb_obs_ = transforms[rgb_obs_key](seq_rgb_obs_)
+            # print('[AFTER]', seq_rgb_obs_.shape, seq_rgb_obs_.min(), seq_rgb_obs_.max())
+        # print(f'[DEBUG] transfroms: {time.time() - start}, {rgb_obs_key}')
+        start = time.time()
         seq_rgb_obs_dict[rgb_obs_key] = seq_rgb_obs_
+        idx += 1
     # shape: N_rgb_obs x (BxCxHxW)
     return {"rgb_obs": seq_rgb_obs_dict}
 

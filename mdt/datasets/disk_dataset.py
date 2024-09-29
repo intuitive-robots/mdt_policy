@@ -4,6 +4,7 @@ from pathlib import Path
 import pickle
 from typing import Any, Dict, List, Tuple
 import random
+import os
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import concurrent.futures
@@ -166,6 +167,8 @@ class ExtendedDiskDataset(DiskDataset):
         action_seq_len: int,
         future_range: int,
         img_gen_frame_diff: int = 3,
+        use_extracted_rel_actions: bool = False,
+        extracted_dir: str = 'extracted/',
         **kwargs: Any,
     ):
         super().__init__(*args, **kwargs)
@@ -177,6 +180,21 @@ class ExtendedDiskDataset(DiskDataset):
         self.random_frame_diff = False if img_gen_frame_diff > -1 else True 
         # self.min_window_size = self.action_seq_len
         # self.max_window_size = self.action_seq_len + self.future_range
+
+        # Using extracted npy to reduce bandwidth of data loading
+        self.use_extracted_rel_actions = use_extracted_rel_actions
+        if use_extracted_rel_actions:
+            self.extracted_dir = extracted_dir
+            if not os.path.exists(extracted_dir):  # maybe a relative path
+                self.extracted_dir = os.path.join(self.abs_datasets_dir, "extracted")  # convert to abs path
+                assert os.path.exists(self.extracted_dir), "extracted dir not found!"
+            with open(os.path.join(self.extracted_dir, "ep_npz_names.list"), "r") as f:
+                self.extracted_ep_npz_names = [int(x.strip()) for x in f.readlines()]
+                self.extracted_ep_npz_name_to_npy_idx = {self.extracted_ep_npz_names[i]: i
+                                                         for i in range(len(self.extracted_ep_npz_names))}
+                # key: int, original episode fn's index; value: int, extracted npy's inner index
+            self.extracted_ep_rel_actions: np.ndarray = np.load(os.path.join(self.extracted_dir, "ep_rel_actions.npy"))
+            logger.info(f"Extracted files loaded from {self.extracted_dir}")
         
     def find_sequence_boundaries(self, idx: int) -> Tuple[int, int]:
         for start_idx, end_idx in self.ep_start_end_ids:
@@ -200,13 +218,26 @@ class ExtendedDiskDataset(DiskDataset):
         keys = list(chain(*self.observation_space.values()))
         keys.remove("language")
         keys.append("scene_obs")
-        episodes = [self.load_file(self._get_episode_name(file_idx)) for file_idx in range(start_idx, end_idx)]
-        
+        # keys:['rgb_static', 'rgb_gripper', 'gen_static', 'gen_gripper', 'robot_obs', 'rel_actions', 'scene_obs']
+
         # Modify the episode dict to only include the specified sequence lengths
         if self.random_frame_diff:
             img_gen_frame_diff = random.randint(0, self.action_seq_len - 1)
         else:
             img_gen_frame_diff = self.img_gen_frame_diff
+        gen_img_idx = start_idx + self.obs_seq_len + img_gen_frame_diff - 1
+
+        if not self.use_extracted_rel_actions:
+            # Op1. original reading actions from episode_xxx.npz one-by-one
+            episodes = [self.load_file(self._get_episode_name(file_idx)) for file_idx in range(start_idx, end_idx)]
+        else:
+            # Op2. reading actions from a single ep_rel_actions.npy file
+            episodes = [self.load_file(self._get_episode_name(file_idx)) for file_idx in
+                        range(start_idx, start_idx + self.obs_seq_len)]
+            gen_img_episode = self.load_file(self._get_episode_name(gen_img_idx))
+            ex_indices = [self.extracted_ep_npz_name_to_npy_idx[file_idx] for file_idx in range(start_idx, end_idx)]
+            ex_actions = self.extracted_ep_rel_actions[ex_indices, :]
+            print('[DEBUG] using extracted episodes!')
 
         episode = {}
         for key in keys:
@@ -214,14 +245,27 @@ class ExtendedDiskDataset(DiskDataset):
                 continue
             
             stacked_data = np.stack([ep[key] for ep in episodes])
-            if key == "rel_actions" or key == 'actions':
-                episode[key] = stacked_data[(self.obs_seq_len-1):((self.obs_seq_len-1) + self.action_seq_len), :]
+            if not self.use_extracted_rel_actions:
+                # Op1. original reading actions from episode_xxx.npz one-by-one
+                if key == "rel_actions" or key == 'actions':
+                    episode[key] = stacked_data[(self.obs_seq_len-1):((self.obs_seq_len-1) + self.action_seq_len), :]
+                else:
+                    if key == 'rgb_static':
+                       gen_img_static = stacked_data[self.obs_seq_len + img_gen_frame_diff - 1, :]
+                    elif key == 'rgb_gripper':
+                        gen_img_gripper = stacked_data[self.obs_seq_len + img_gen_frame_diff -1, :]
+                    episode[key] = stacked_data[:self.obs_seq_len, :]
             else:
-                if key == 'rgb_static':
-                   gen_img_static = stacked_data[self.obs_seq_len + img_gen_frame_diff - 1, :]
-                elif key == 'rgb_gripper':
-                    gen_img_gripper = stacked_data[self.obs_seq_len + img_gen_frame_diff -1, :]
-                episode[key] = stacked_data[:self.obs_seq_len, :]
+                # Op2. reading actions from a single ep_rel_actions.npy file
+                if key == "rel_actions" or key == 'actions':
+                    episode[key] = ex_actions[(self.obs_seq_len - 1):((self.obs_seq_len - 1) + self.action_seq_len), :]
+                else:
+                    if key == 'rgb_static':
+                        gen_img_static = gen_img_episode[key]
+                    elif key == 'rgb_gripper':
+                        gen_img_gripper = gen_img_episode[key]
+
+                    episode[key] = stacked_data[:self.obs_seq_len, :]
 
         if self.with_lang:
             episode["language"] = self.lang_ann[self.lang_lookup[idx]][0]  # TODO check  [0]

@@ -19,6 +19,7 @@ lang_dataset:
   future_range: ${future_range}
 
   img_gen_frame_diff: ${img_gen_frame_diff}
+  use_extracted_rel_actions: ${use_extracted_rel_actions}
 
 vision_dataset:
   _target_: mdt.datasets.disk_dataset.ExtendedDiskDataset
@@ -39,3 +40,4 @@ vision_dataset:
   future_range: ${future_range}
 
   img_gen_frame_diff: ${img_gen_frame_diff}
+  use_extracted_rel_actions: ${use_extracted_rel_actions}

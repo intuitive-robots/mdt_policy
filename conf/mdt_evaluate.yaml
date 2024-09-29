@@ -8,8 +8,7 @@ eval_cfg_overwrite:
       lang_dataset:
         lang_folder: lang_annotations
   overwrite_module_cfg:
-#    voltron_cache: /home/i53/student/yagmurlu/code/mdt_policy/vcache
-     voltron_cache: /home/geyuan/pretrained
+    voltron_cache: /home/i53/student/yagmurlu/code/mdt_policy/vcache
 
 ep_len: 360
 num_sequences: 1000
@@ -18,12 +17,10 @@ lang_embeddings: null
 render: False
 log_wandb: True
 wandb:
-  entity: gavinyuan
+  entity: omeryagmurlu
 debug: False
-#dataset_path: /home/i53/student/yagmurlu/code/mdt_policy/dataset/task_D_D
-#train_folder: /home/i53/student/yagmurlu/code/mdt_policy/pretrained_models/CALVIN ABCD/mdtv_1_abcd
-dataset_path: /home/geyuan/local_soft/task_D_D
-train_folder: /home/geyuan/pretrained/CALVIN D/mdtv_1_d
+dataset_path: /home/i53/student/yagmurlu/code/mdt_policy/dataset/task_D_D
+train_folder: /home/i53/student/yagmurlu/code/mdt_policy/pretrained_models/CALVIN ABCD/mdtv_1_abcd
 model_name: mdt_test
 device: 0
 sampler_type: ddim

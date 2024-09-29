@@ -33,7 +33,7 @@ rollout_lh_skip_epochs: 19
 window_sampling_strategy: 'geometric' 
 num_tokens_voltron: 3
 num_workers: 12
-img_gen_frame_diff: 3 
+img_gen_frame_diff: 3
 use_extracted_rel_actions: true
 benchmark_name: calvin_d
 

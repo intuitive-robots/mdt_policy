@@ -237,7 +237,6 @@ class ExtendedDiskDataset(DiskDataset):
             gen_img_episode = self.load_file(self._get_episode_name(gen_img_idx))
             ex_indices = [self.extracted_ep_npz_name_to_npy_idx[file_idx] for file_idx in range(start_idx, end_idx)]
             ex_actions = self.extracted_ep_rel_actions[ex_indices, :]
-            print('[DEBUG] using extracted episodes!')
 
         episode = {}
         for key in keys:

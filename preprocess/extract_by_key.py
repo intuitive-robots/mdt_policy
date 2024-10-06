@@ -13,7 +13,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 
 class DiskDataset(Dataset):
-    def __init__(self, in_root='/home/geyuan/code/mdt24rss_fork/dataset/litdata',
+    def __init__(self, in_root,
                  task='task_D_D',
                  split='training',
                  target_key='rel_actions'
@@ -42,7 +42,7 @@ class DiskDataset(Dataset):
 
 @torch.no_grad()
 def diskdata_extract(
-        root='/home/geyuan/code/mdt24rss_fork/dataset/litdata',
+        root,
         task='task_D_D',  # calvin_debug_dataset, task_D_D
         split='training',  # training, validation
         extract_key='rel_actions',
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         force: whether to overwrite existing extracted data
     '''
     args = argparse.ArgumentParser()
-    args.add_argument('-i', '--in_root', type=str, default='/data3/geyuan/datasets/CALVIN',
+    args.add_argument('-i', '--in_root', type=str,
                       help='This path contains task_XXX_D/ directories.')
     args.add_argument('--in_task', type=str, default='all',
                       choices=['all', 'task_D_D', 'task_ABC_D', 'task_ABCD_D', 'calvin_debug_dataset'])

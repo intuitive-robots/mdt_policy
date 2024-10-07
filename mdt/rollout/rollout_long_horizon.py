@@ -195,8 +195,12 @@ class RolloutLongHorizon(Callback):
     def evaluate_policy(self, model):
         results = []
         total_evaluations = len(self.eval_sequences)
-        
-        for i, (initial_state, eval_sequence) in enumerate(tqdm(self.eval_sequences, desc="Evaluating Policy", total=total_evaluations)):
+
+        local_rank = int(dist.get_rank()) if (dist.is_available() and dist.is_initialized()) else 0
+        for i, (initial_state, eval_sequence) in enumerate(
+                tqdm(self.eval_sequences,
+                     desc=f"Evaluating Policy(rank={local_rank})",
+                     total=total_evaluations, position=local_rank)):
             record = i < self.num_videos
             result = self.evaluate_sequence(model, initial_state, eval_sequence, record, i)
             results.append(result)

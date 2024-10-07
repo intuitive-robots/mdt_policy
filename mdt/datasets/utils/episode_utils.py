@@ -65,6 +65,7 @@ def process_rgb(
     transforms: Dict,
     seq_idx: int = 0,
     window_size: int = 0,
+    device: torch.device = None,
 ) -> Dict[str, Dict[str, torch.Tensor]]:
     rgb_obs_keys = observation_space["rgb_obs"]
     seq_rgb_obs_dict = {}
@@ -84,6 +85,8 @@ def process_rgb(
             seq_rgb_obs_ = torch.from_numpy(rgb_obs[seq_idx : seq_idx + window_size]).byte().permute(0, 3, 1, 2)
         # we might have different transformations for the different cameras
         if rgb_obs_key in transforms:
+            if device is not None:  # train:CPU multi-workers; eval:GPU can be faster due to iterative process
+                seq_rgb_obs_ = seq_rgb_obs_.to(device)
             seq_rgb_obs_ = transforms[rgb_obs_key](seq_rgb_obs_)
         seq_rgb_obs_dict[rgb_obs_key] = seq_rgb_obs_
     # shape: N_rgb_obs x (BxCxHxW)

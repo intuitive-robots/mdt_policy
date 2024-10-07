@@ -46,7 +46,7 @@ class HulcWrapper(gym.Wrapper):
 
     def transform_observation(self, obs: Dict[str, Any]) -> Dict[str, Union[torch.Tensor, Dict[str, torch.Tensor]]]:
         state_obs = process_state(obs, self.observation_space_keys, self.transforms, self.proprio_state)
-        rgb_obs = process_rgb(obs["rgb_obs"], self.observation_space_keys, self.transforms)
+        rgb_obs = process_rgb(obs["rgb_obs"], self.observation_space_keys, self.transforms, device=self.device)
         depth_obs = process_depth(obs["depth_obs"], self.observation_space_keys, self.transforms)
 
         state_obs["robot_obs"] = state_obs["robot_obs"].to(self.device).unsqueeze(0)

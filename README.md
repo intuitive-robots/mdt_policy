@@ -74,6 +74,40 @@ If you want to train on the [CALVIN](https://github.com/mees/calvin) dataset, ch
 cd $MDT_ROOT/dataset
 sh download_data.sh D | ABCD
 ```
+#### (Optional) Preprocessing with CALVIN
+
+Since MDT uses action chunking, it needs to load multiple (~10) `episode_{}.npz` files for each inference. In combination with batching, this results in a large disk bandwidth needed for each iteration (usually ~2000MB/iteration).
+This has the potential of significantly reducing your GPU utilization rate during training depending on your hardware.
+Therefore, you can use the script `extract_by_key.py` to extract the data into a single file, avoiding opening too many episode files when using the CALVIN dataset.
+
+##### Usage example:
+
+```shell
+python preprocess/extract_by_key.py -i /YOUR/PATH/TO/CALVIN/ \
+    --in_task all
+```
+
+##### Params:
+
+Run this command to see more detailed information:
+
+```shell
+python preprocess/extract_by_key.py -h
+```
+
+Important params:
+
+* `--in_root`: `/YOUR/PATH/TO/CALVIN/`, e.g `/data3/geyuan/datasets/CALVIN/`
+* `--extract_key`: A key of `dict(episode_xxx.npz)`, default is **'rel_actions'**, the saved file name depends on this (i.e `ep_{extract_key}.npy`)
+
+Optional params:
+
+* `--in_task`: default is **'all'**, meaning all task folders (e.g `task_ABCD_D/`) of CALVIN
+* `--in_split`: default is **'all'**, meaning both `training/` and `validation/`
+* `--out_dir`: optional, default is **'None'**, and will be converted to `{in_root}/{in_task}/{in_split}/extracted/`
+* `--force`: whether to overwrite existing extracted data
+
+Thanks to @ygtxr1997 for debugging the GPU utilization and providing a merge request.
 
 ### Step 2 - Download Pre-trained Models
 

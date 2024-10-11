@@ -352,3 +352,28 @@ or approximately 20% of the dataset.
     year={2024}
     }
 ```
+
+## Related Projects
+<h3><a href="https://intuitive-robots.github.io/beso-website/">Goal Conditioned Imitation Learning using Score-based Diffusion Policies</a></h3>
+<div class="column is-full columns">
+    <div class="column is-half">
+        <img src="./static/image/Beso_Figure_1.png" alt="BESO Overview">
+    </div>
+    <div class="column is-half">
+        <p>
+BESO (BEhavior generation with ScOre-based Diffusion Policies) is a novel policy architecture using score-based diffusion models (SDMs) for Goal-Conditioned Imitation Learning (GCIL). Unlike prior methods, BESO decouples the learning of the score model from the inference process, allowing for significantly faster goal-specified behavior generation (3 denoising steps vs. 30+ in other approaches). It also captures multi-modality in data without the need for hierarchical policies or clustering. Additionally, BESO can learn both goal-conditioned and goal-independent policies from play data. The method outperforms existing GCIL techniques on challenging benchmarks, backed by extensive ablation studies.
+        </p>
+    </div>
+</div>
+
+<h3><a href="https://robottasklabeling.github.io/">Scaling Robot Policy Learning via Zero-Shot Labeling with Foundation Models</a></h3>
+<div class="column is-full columns">
+    <div class="column is-half">
+        <img src="./static/image/nils-ow.png" alt="NILS Overview">
+    </div>
+    <div class="column is-half">
+        <p>
+Using pre-trained vision-language models, NILS detects objects, identifies changes, segments tasks, and annotates behavior datasets. Evaluations on the BridgeV2 and kitchen play datasets demonstrate its effectiveness in annotating diverse, unstructured robot demonstrations while addressing the limitations of traditional human labeling methods.
+        </p>
+    </div>
+</div>

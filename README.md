@@ -39,7 +39,7 @@ Results on the [CALVIN](https://github.com/mees/calvin) benchmark (1000 chains):
 ## Installation
 To begin, clone the repository locally:
 ```bash
-git clone --recurse-submodules git@github.com:mbreuss/mdt_policy.git
+git clone --recurse-submodules git@github.com:intuitive-robots/mdt_policy.git
 export MDT_ROOT=$(pwd)/mdt_policy
 
 ```
